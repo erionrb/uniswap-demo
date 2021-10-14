@@ -21,11 +21,6 @@ module.exports = {
       port: 8545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
     },
-    test: {
-      host: "127.0.0.1",
-      port: 8546,
-      network_id: "*"
-    },
     rinkeby: {
       provider: () => new HDWalletProvider(MNEMONIC, `https://rinkeby.infura.io/v3/${INFURA_ID}`),
       network_id: 4,
