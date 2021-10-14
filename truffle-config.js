@@ -28,6 +28,13 @@ module.exports = {
       timeoutBlocks: 200000000000,
       skipDryRun: true
     },
+    ropsten: {
+      provider: () => new HDWalletProvider(MNEMONIC, `https://ropsten.infura.io/v3/${INFURA_ID}`),
+      network_id: 3,
+      confirmations: 1,
+      timeoutBlocks: 200000000000,
+      skipDryRun: true
+    },
     bsctestnet: {
       provider: () => new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545`),
       network_id: 97,
@@ -45,7 +52,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "^0.8.0",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "^0.6.6",    // Fetch exact version from solc-bin (default: truffle's version)
     }
   },
 

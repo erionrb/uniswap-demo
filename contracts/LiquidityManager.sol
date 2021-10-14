@@ -6,9 +6,9 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract LiquidityManager is Ownable {
 
-    address public uniswapV2Router02Address;
+    address payable public uniswapV2Router02Address;
 
-    constructor(address _uniswapV2Router02Address) public {
+    constructor(address payable _uniswapV2Router02Address) public {
         uniswapV2Router02Address = _uniswapV2Router02Address;
     }
 
@@ -42,6 +42,15 @@ contract LiquidityManager is Ownable {
         uint amountB, 
         uint liquidity
     ) {
-        // TODO implement here the addLiquidity
+        (amountA, amountB, liquidity) = UniswapV2Router02(uniswapV2Router02Address).addLiquidity(
+            _tokenA,
+            _tokenB, 
+            _amountADesired,
+            _amountBDesired,
+            _amountAMin,
+            _amountBMin, 
+            _to,
+            _deadline
+        );
     }
 }
