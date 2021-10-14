@@ -1,3 +1,8 @@
+# Uniswap DEMO
+
+This is a demo implementation to exemplify how to use Uniswap contracts.
+
+
 In order to have a good experience througth this tutorial, please make sure you have all the requirements bellow pre-configured, or go to the next section **installation**:
 
 - Windows, Linux or Mac OS X
