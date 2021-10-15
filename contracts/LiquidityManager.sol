@@ -4,12 +4,22 @@ pragma solidity ^0.6.6;
 import './interfaces/UniswapV2Router02.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract LiquidityManager is Ownable {
+contract LiquidityManager {
 
-    address payable public uniswapV2Router02Address;
+    address payable public ROUTER_V2;
 
-    constructor(address payable _uniswapV2Router02Address) public {
-        uniswapV2Router02Address = _uniswapV2Router02Address;
+    constructor(address payable _ROUTER_V2) public {
+        ROUTER_V2 = _ROUTER_V2;
+    }
+
+    event AddedLiquidity(uint256 amountA, uint256 amountB, uint256 liquidity);
+
+    function deposit(address _token, uint256 _amount) public {
+        require(
+            IERC20(_token).balanceOf(msg.sender) >= _amount,
+            "Sender dos not have sufficient balance"
+        );
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
     }
 
     /**
@@ -23,10 +33,6 @@ contract LiquidityManager is Ownable {
      * @param _amountBMin	    Bounds the extent to which the A/B price can go up before the transaction reverts Must be <= amountBDesired
      * @param _to	            Recipient of the liquidity tokens
      * @param _deadline	        Unix timestamp after which the transaction will revert
-     *
-     * @return amountA	        The amount of tokenA sent to the pool
-     * @return amountB	        The amount of tokenB sent to the pool
-     * @return liquidity	    The amount of liquidity tokens minted
      */
     function addLiquidity(
         address _tokenA,  
@@ -37,12 +43,23 @@ contract LiquidityManager is Ownable {
         uint _amountBMin,  
         address _to,  
         uint _deadline
-    ) external onlyOwner returns (
-        uint amountA, 
-        uint amountB, 
-        uint liquidity
-    ) {
-        (amountA, amountB, liquidity) = UniswapV2Router02(uniswapV2Router02Address).addLiquidity(
+    ) external {
+        require(
+            IERC20(_tokenA).balanceOf(msg.sender) >= _amountADesired,
+            "Sender dos not have sufficient balance"
+        );
+        require(
+            IERC20(_tokenB).balanceOf(msg.sender) >= _amountBDesired,
+            "Sender dos not have sufficient balance"
+        );
+
+        IERC20(_tokenA).transferFrom(msg.sender, address(this), _amountADesired);
+        IERC20(_tokenB).transferFrom(msg.sender, address(this), _amountBDesired);
+        
+        IERC20(_tokenB).approve(ROUTER_V2, _amountBDesired);
+        IERC20(_tokenA).approve(ROUTER_V2, _amountADesired);
+
+        (uint256 amountA, uint256 amountB, uint256 liquidity) = UniswapV2Router02(ROUTER_V2).addLiquidity(
             _tokenA,
             _tokenB, 
             _amountADesired,
@@ -52,5 +69,9 @@ contract LiquidityManager is Ownable {
             _to,
             _deadline
         );
+
+        emit AddedLiquidity(amountA, amountB, liquidity);
     }
+
+    receive() external payable {}
 }
